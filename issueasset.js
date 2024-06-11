@@ -1,22 +1,15 @@
 var StellarSdk = require("stellar-sdk");
-var server = new StellarSdk.Horizon.Server(
-  "https://horizon-testnet.stellar.org",
-);
+var server = new StellarSdk.Horizon.Server("https://horizon-testnet.stellar.org");
 
 // Keys for accounts to issue and receive the new asset
-var issuingKeys = StellarSdk.Keypair.fromSecret(
-  "SD5GY5SHX6XZKNDQRP66GKQPWTLP3ODVDDFVLDUG7SBXB3IXLVYDPBED",
-);
-var receivingKeys = StellarSdk.Keypair.fromSecret(
-  "SDDGSCXFAGDGQXG2QEUMJCD24TIL3ETUMCHUFUKYVYV5DQ4ZNW5JLMMH",
-);
+var issuingKeys = StellarSdk.Keypair.fromSecret("SD5GY5SHX6XZKNDQRP66GKQPWTLP3ODVDDFVLDUG7SBXB3IXLVYDPBED");
+var receivingKeys = StellarSdk.Keypair.fromSecret("SDDGSCXFAGDGQXG2QEUMJCD24TIL3ETUMCHUFUKYVYV5DQ4ZNW5JLMMH");
 
 // Create an object to represent the new asset
 var NewDollar = new StellarSdk.Asset("NewDollar", issuingKeys.publicKey());
 
 // First, the receiving account must trust the asset
-server
-  .loadAccount(receivingKeys.publicKey())
+server.loadAccount(receivingKeys.publicKey())
   .then(function (receiver) {
     var transaction = new StellarSdk.TransactionBuilder(receiver, {
       fee: 100,
@@ -37,7 +30,7 @@ server
     return server.submitTransaction(transaction);
   })
   .then(console.log)
-
+  
   // Second, the issuing account actually sends a payment using the asset
   .then(function () {
     return server.loadAccount(issuingKeys.publicKey());
@@ -63,4 +56,31 @@ server
   .then(console.log)
   .catch(function (error) {
     console.error("Error!", error);
+  })
+  
+  // Create a sell offer for the new asset
+  .then(function () {
+    return server.loadAccount(issuingKeys.publicKey());
+  })
+  .then(function (issuer) {
+    var transaction = new StellarSdk.TransactionBuilder(issuer, {
+      fee: 100,
+      networkPassphrase: StellarSdk.Networks.TESTNET,
+    })
+      .addOperation(
+        StellarSdk.Operation.manageSellOffer({
+          selling: NewDollar,
+          buying: StellarSdk.Asset.native(),
+          amount: '10', // Amount of NewDollar to sell
+          price: '1', // Price in XLM per NewDollar
+        }),
+      )
+      .setTimeout(100)
+      .build();
+    transaction.sign(issuingKeys);
+    return server.submitTransaction(transaction);
+  })
+  .then(console.log)
+  .catch(function (error) {
+    console.error('Error!', error);
   });
