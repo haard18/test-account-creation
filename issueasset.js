@@ -1,9 +1,13 @@
+// const { configDotenv } = require("dotenv");
 var StellarSdk = require("stellar-sdk");
 var server = new StellarSdk.Horizon.Server("https://horizon-testnet.stellar.org");
+const dotenv = require("dotenv"); dotenv.config();
+const issuer=process.env.ISSUING_SECRET;
+const receiver=process.env.RECEIVING_SECRET;
 
 // Keys for accounts to issue and receive the new asset
-var issuingKeys = StellarSdk.Keypair.fromSecret("SD5GY5SHX6XZKNDQRP66GKQPWTLP3ODVDDFVLDUG7SBXB3IXLVYDPBED");
-var receivingKeys = StellarSdk.Keypair.fromSecret("SDDGSCXFAGDGQXG2QEUMJCD24TIL3ETUMCHUFUKYVYV5DQ4ZNW5JLMMH");
+var issuingKeys = StellarSdk.Keypair.fromSecret("SD3W5DMC4VPBWNGSMWREAB5PYJ7JBKM5GQNZ6CT7UQVZ7SPACWQCDQFZ");
+var receivingKeys = StellarSdk.Keypair.fromSecret("SDJN3FTAXGSZ3SGGS47R42F3E72PJVJQN47JU24Y4EHKS4IBPLGLGLFP");
 
 // Create an object to represent the new asset
 var NewDollar = new StellarSdk.Asset("NewDollar", issuingKeys.publicKey());
