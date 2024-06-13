@@ -48,7 +48,7 @@ server.loadAccount(receivingKeys.publicKey())
         StellarSdk.Operation.payment({
           destination: receivingKeys.publicKey(),
           asset: NewDollar,
-          amount: "10",
+          amount: "50",
         }),
       )
       // setTimeout is required for a transaction
