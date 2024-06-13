@@ -1,8 +1,8 @@
 const express=require('express')
 var StellarSdk = require("stellar-sdk");
 const app=express();
-// const mongoose=require('mongoose');
-// const {connectToMongoose,txnModel}=require('./connecToDB');
+const mongoose=require('mongoose');
+const {connectToMongoose,txnModel}=require('./connecToDB');
 
 app.use(express.json())
 app.post('/buy-tokens',async(req,res)=>{
@@ -60,7 +60,7 @@ app.post('/buy-tokens',async(req,res)=>{
 })
 //route for block buying
 app.post('/buy-block',async(req,res)=>{
- 
+  connectToMongoose()
   const {secret,blockID,amount}=req.body;
   const server = new StellarSdk.Horizon.Server('https://horizon-testnet.stellar.org');
   const userKeypair = StellarSdk.Keypair.fromSecret(secret);
@@ -94,7 +94,14 @@ app.post('/buy-block',async(req,res)=>{
     .build();
     transaction.sign(userKeypair);
     const transactionResult = await server.submitTransaction(transaction);
-    
+    const txn = await txnModel.create({
+      blockID: blockID,
+      amount: amount,
+      owner: userPublicKey,
+      transactionID: transactionResult.hash,
+      status: 'success'
+    });
+
     // .then(console.log("Transaction saved in DB"))
     console.log('Transaction successful:', transactionResult);
     res.json({'Transaction successful:': transactionResult});
@@ -103,6 +110,9 @@ app.post('/buy-block',async(req,res)=>{
     throw error;
   }
 })
-app.listen(3000,()=>{
-    console.log('Server is running on port 3000');
-})
+
+connectToMongoose().then(() => {
+  app.listen(3000, () => {
+    console.log(`Server is running on port 3000`);
+  });
+}); 

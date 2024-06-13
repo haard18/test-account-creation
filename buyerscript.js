@@ -2,7 +2,7 @@
   var server = new StellarSdk.Horizon.Server("https://horizon-testnet.stellar.org");
 
   // Buyer's keypair
-  var buyerKeys = StellarSdk.Keypair.fromSecret("SBNLB64G3JN3WMEMJYOX5AJLA4DNTZYVHV5WWOWSXFYTJ5UK25BG467M");
+  var buyerKeys = StellarSdk.Keypair.fromSecret("SAS53FAYJJMC7OOS2UIK3SIFEKND6JEGZ7FHQWOMYD5FHUDXMA77JZJU");
 
   // Asset to buy
   var NewDollar = new StellarSdk.Asset("NewDollar","GA2XMHHFMN3NDSG5BLQYTDIYFYHBRQFYJ4DZKKBI7JDVIVPIVHVNA2ND");

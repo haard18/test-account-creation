@@ -8,7 +8,7 @@ const receiver=process.env.RECEIVING_SECRET;
 // Keys for accounts to issue and receive the new asset
 var issuingKeys = StellarSdk.Keypair.fromSecret("SD3W5DMC4VPBWNGSMWREAB5PYJ7JBKM5GQNZ6CT7UQVZ7SPACWQCDQFZ");
 var receivingKeys = StellarSdk.Keypair.fromSecret("SDJN3FTAXGSZ3SGGS47R42F3E72PJVJQN47JU24Y4EHKS4IBPLGLGLFP");
-
+console.log(receivingKeys.publicKey());
 // Create an object to represent the new asset
 var NewDollar = new StellarSdk.Asset("NewDollar", issuingKeys.publicKey());
 
@@ -48,7 +48,7 @@ server.loadAccount(receivingKeys.publicKey())
         StellarSdk.Operation.payment({
           destination: receivingKeys.publicKey(),
           asset: NewDollar,
-          amount: "50",
+          amount: "10",
         }),
       )
       // setTimeout is required for a transaction
@@ -75,7 +75,7 @@ server.loadAccount(receivingKeys.publicKey())
         StellarSdk.Operation.manageSellOffer({
           selling: NewDollar,
           buying: StellarSdk.Asset.native(),
-          amount: '10', // Amount of NewDollar to sell
+          amount: '50', // Amount of NewDollar to sell
           price: '1', // Price in XLM per NewDollar
         }),
       )
